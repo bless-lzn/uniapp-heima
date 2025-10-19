@@ -31,11 +31,10 @@ export const useMemberStore = defineStore(
     // 小程序端配置
     persist: {
       storage: {
-
         getItem: key => uni.getStorageSync(key),
         setItem: (key, value) => uni.setStorageSync(key, value),
         removeItem: key => uni.removeStorageSync(key),
       },
-    }
+    },
   },
 )
