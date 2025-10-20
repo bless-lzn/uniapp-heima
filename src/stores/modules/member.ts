@@ -26,14 +26,15 @@ export const useMemberStore = defineStore(
     }
   },
   // TODO: 持久化
-  {//网页端配置
+  {
+    //网页端配置
     // persist: true,
     // 小程序端配置
     persist: {
       storage: {
-        getItem: key => uni.getStorageSync(key),
+        getItem: (key) => uni.getStorageSync(key),
         setItem: (key, value) => uni.setStorageSync(key, value),
-        removeItem: key => uni.removeStorageSync(key),
+        removeItem: (key) => uni.removeStorageSync(key),
       },
     },
   },

@@ -6,7 +6,8 @@
     //一正则方式自定义组件匹配规则
     "custom": {
       // uni-ui 规则如下配置
-      "^uni-(.*)": "@dcloudio/uni-ui/lib/uni-$1/uni-$1.vue"
+      "^uni-(.*)": "@dcloudio/uni-ui/lib/uni-$1/uni-$1.vue",
+      "^Xtx(.*)": "@/components/Xtx$1.vue"
     }
   },
   "pages": [
@@ -14,6 +15,9 @@
     {
       "path": "pages/index/index",
       "style": {
+        //自定义nav
+        "navigationStyle": "custom", //默认隐藏导航栏
+        "navigationBarTextStyle": "white", //将时间大等改为白色
         "navigationBarTitleText": "首页"
       }
     },
