@@ -1,33 +1,3 @@
-<script setup lang="ts">
-import { getHomeGoodsGuessLikeAPI } from '@/services/home'
-import type { PageParams } from '@/types/global'
-import type { GuessItem } from '@/types/home'
-import { defineExpose, onMounted, ref } from 'vue'
-
-const dataList = ref<GuessItem[]>([])
-const pageParams: Required<PageParams> = {
-  page: 1,
-  pageSize: 10,
-}
-//调用api
-const getData = async () => {
-  const res = await getHomeGoodsGuessLikeAPI()
-  if (res.code === '1' && dataList.value) {
-    // dataList.value = res.result.items
-    //改为数组的添加
-    dataList.value.push(...res.result.items)
-    pageParams.page++
-  }
-}
-onMounted(() => {
-  getData()
-})
-
-defineExpose({
-  getmore: getData,
-})
-</script>
-
 <template>
   <!-- 猜你喜欢 -->
   <view class="caption">
@@ -48,8 +18,51 @@ defineExpose({
       </view>
     </navigator>
   </view>
-  <view class="loading-text"> 正在加载... </view>
+  <view class="loading-text">
+    {{ finish ? '没有更多数据了' : '正在加载...' }}
+  </view>
 </template>
+<script setup lang="ts">
+import { getHomeGoodsGuessLikeAPI } from '@/services/home'
+import type { PageParams } from '@/types/global'
+import type { GuessItem } from '@/types/home'
+import { defineExpose, onMounted, ref } from 'vue'
+
+const dataList = ref<GuessItem[]>([])
+const pageParams: Required<PageParams> = {
+  page: 32,
+  pageSize: 10,
+}
+const finish = ref(false)
+//调用api
+const getData = async () => {
+  if (finish.value === true) {
+    return uni.showToast({
+      title: '没有更多数据了',
+      icon: 'none',
+    })
+  }
+  const res = await getHomeGoodsGuessLikeAPI(pageParams)
+  if (res.code === '1' && dataList.value) {
+    // dataList.value = res.result.items
+    //改为数组的添加
+    dataList.value.push(...res.result.items)
+    //添加判断
+    if (pageParams.page < res.result.pages) {
+      pageParams.page++
+    } else {
+      finish.value = true
+    }
+  }
+}
+onMounted(() => {
+  getData()
+})
+
+defineExpose({
+  getmore: getData,
+})
+</script>
 
 <style lang="scss">
 :host {

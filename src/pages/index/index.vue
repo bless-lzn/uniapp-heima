@@ -1,7 +1,14 @@
 <template>
   <view class="indexPage">
     <CustomerNavbar class="navbar" />
-    <scroll-view @scrolltolower="onScrolltolower" scroll-y class="scroll-view">
+    <scroll-view
+      @scrolltolower="onScrolltolower"
+      refresher-enabled
+      @refresherrefresh="onRefresh"
+      :refresher-triggered="isTriggered"
+      scroll-y
+      class="scroll-view"
+    >
       <XtxSwiper :list="bannerList"></XtxSwiper>
       <CategoryPanel :dataList="categoryList"></CategoryPanel>
       <HotPanel :dataList="hotList"></HotPanel>
@@ -28,6 +35,15 @@ const getHomeBannerData = async () => {
     bannerList.value = res.result
   }
 }
+const isTriggered = ref(false)
+const onRefresh = async () => {
+  //刷新数据
+  //开启下拉刷新
+  isTriggered.value = true
+  await Promise.all([getHomeBannerData(), getHomeCategoryData(), getHomeHotData()])
+  //关闭下拉刷新
+  isTriggered.value = false
+}
 
 // 获取猜你喜欢的组件实例,指定类型
 const guessRef = ref<XtxGuessInstance>()
@@ -37,7 +53,6 @@ const onScrolltolower = () => {
   // guessRef.value?.getMore()
   guessRef.value?.getmore()
   console.log(guessRef.value)
-
   console.log('触底了')
 }
 
