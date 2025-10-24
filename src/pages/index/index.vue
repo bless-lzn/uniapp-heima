@@ -36,17 +36,19 @@ const getHomeBannerData = async () => {
   }
 }
 const isTriggered = ref(false)
+// 获取猜你喜欢的组件实例,指定类型
+const guessRef = ref<XtxGuessInstance>()
 const onRefresh = async () => {
   //刷新数据
   //开启下拉刷新
   isTriggered.value = true
+  //先重置数据，再刷新
+  guessRef.value.resetData()
   await Promise.all([getHomeBannerData(), getHomeCategoryData(), getHomeHotData()])
   //关闭下拉刷新
   isTriggered.value = false
 }
 
-// 获取猜你喜欢的组件实例,指定类型
-const guessRef = ref<XtxGuessInstance>()
 //滚动触底的时候进行触发
 const onScrolltolower = () => {
   //调用猜你喜欢的事件的方法

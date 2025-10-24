@@ -55,12 +55,21 @@ const getData = async () => {
     }
   }
 }
+
+//封装重置函数
+const resetData = () => {
+  dataList.value = []
+  pageParams.page = 1
+  finish.value = false
+}
+
 onMounted(() => {
   getData()
 })
 
 defineExpose({
   getmore: getData,
+  resetData,
 })
 </script>
 
