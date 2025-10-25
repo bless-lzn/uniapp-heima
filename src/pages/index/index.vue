@@ -1,20 +1,24 @@
 <template>
   <view class="indexPage">
     <CustomerNavbar class="navbar" />
-    <scroll-view
-      @scrolltolower="onScrolltolower"
-      refresher-enabled
-      @refresherrefresh="onRefresh"
-      :refresher-triggered="isTriggered"
-      scroll-y
-      class="scroll-view"
-    >
-      <XtxSwiper :list="bannerList"></XtxSwiper>
-      <CategoryPanel :dataList="categoryList"></CategoryPanel>
-      <HotPanel :dataList="hotList"></HotPanel>
-      <!-- 猜你喜欢 需要父亲调用子类的方法-->
-      <XtxGuess ref="guessRef"></XtxGuess>
-    </scroll-view>
+    <view>
+      <scroll-view
+        @scrolltolower="onScrolltolower"
+        refresher-enabled
+        @refresherrefresh="onRefresh"
+        :refresher-triggered="isTriggered"
+        scroll-y
+        class="scroll-view"
+      >
+        <PageSkeleton v-if="loading" />
+        <template v-else>
+          <XtxSwiper :list="bannerList"></XtxSwiper>
+          <CategoryPanel :dataList="categoryList"></CategoryPanel>
+          <HotPanel :dataList="hotList"></HotPanel>
+          <XtxGuess ref="guessRef"></XtxGuess>
+        </template>
+      </scroll-view>
+    </view>
   </view>
 </template>
 
@@ -27,17 +31,20 @@ import { onLoad } from '@dcloudio/uni-app'
 import CategoryPanel from './components/CategoryPanel.vue'
 import HotPanel from '@/components/HotPanel.vue'
 import type { XtxGuessInstance } from './components/components'
+import PageSkeleton from './components/PageSkeleton.vue'
 
 const bannerList = ref<BannerItem[]>([])
+const isTriggered = ref(false)
+// 获取猜你喜欢的组件实例,指定类型
+const guessRef = ref<XtxGuessInstance>()
+const loading = ref(false)
 const getHomeBannerData = async () => {
   const res = await getHomeBannerAPI()
   if (res.code === '1' && res.result) {
     bannerList.value = res.result
   }
 }
-const isTriggered = ref(false)
-// 获取猜你喜欢的组件实例,指定类型
-const guessRef = ref<XtxGuessInstance>()
+
 const onRefresh = async () => {
   //刷新数据
   //开启下拉刷新
@@ -75,10 +82,10 @@ const getHomeHotData = async () => {
     console.log(hotList.value)
   }
 }
-onLoad(() => {
-  getHomeBannerData()
-  getHomeCategoryData()
-  getHomeHotData()
+onLoad(async () => {
+  loading.value = true
+  await Promise.all([getHomeBannerData(), getHomeCategoryData(), getHomeHotData()])
+  loading.value = false
 })
 </script>
 <style lang="scss">
