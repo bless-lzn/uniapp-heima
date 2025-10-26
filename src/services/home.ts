@@ -50,3 +50,9 @@ export const getHomeGoodsGuessLikeAPI = (data?: PageParams) => {
     data,
   })
 }
+
+// src/services/home.ts
+import type { GoodsItem } from '@/types/global'
+
+// GuessItem 和 GoodsItem 类型相同
+export type GuessItem = GoodsItem
