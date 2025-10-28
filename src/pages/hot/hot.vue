@@ -42,7 +42,7 @@
           </view>
         </navigator>
       </view>
-      <view class="loading-text">正在加载...</view>
+      <view class="loading-text">{{ finish ? '没有更多数据了' : '正在加载...' }}</view>
     </scroll-view>
   </view>
 </template>
@@ -73,12 +73,21 @@ uni.setNavigationBarTitle({ title: currUrlMap!.title })
 const bannerPicture = ref<string>('')
 const subTypes = ref<SubTypeItem[]>([])
 const activeIndex = ref<number>(0)
+const finish = ref(false)
 const onActiced = (index: number) => {
   activeIndex.value = index
 }
+//数据向下滚动的时候出现的值
 const onScrolltolower = async () => {
   //获取当前选项
   const currsubTypes = subTypes.value[activeIndex.value]
+  if (currsubTypes.goodsItems.page >= currsubTypes.goodsItems.pages) {
+    finish.value = true
+    return uni.showToast({
+      title: '没有更多数据了',
+      icon: 'none',
+    })
+  }
   //当前页码累加
   currsubTypes.goodsItems.page += 1
   const res = await getHotRecommendAPI(currUrlMap!.url, {
@@ -93,7 +102,7 @@ const onScrolltolower = async () => {
     currsubTypes.goodsItems.items.push(...newsubTypes.goodsItems.items)
   }
 }
-//获取热门推荐数据
+//获取热门推荐数据 第一次加载的时候出现的值
 const getHotRecommendData = async () => {
   const res = await getHotRecommendAPI(currUrlMap!.url)
   if (res.code === '1' && res.result) {
